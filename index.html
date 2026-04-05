@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAR CARE INSURANCE | Premium UAE Vehicle Coverage</title>
+    <style>
+        :root {
+            --primary-blue: #004a99;
+            --dark-blue: #002a52;
+            --accent-teal: #00cec9;
+            --whatsapp-green: #25d366;
+            --text-dark: #2d3436;
+            --light-bg: #f8f9fa;
+        }
+
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            line-height: 1.6; margin: 0; color: var(--text-dark); background-color: var(--light-bg); 
+        }
+
+        header {
+            position: relative;
+            background: linear-gradient(135deg, rgba(0, 42, 82, 0.85) 0%, rgba(0, 74, 153, 0.8) 100%), 
+                        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=2000') no-repeat center center;
+            background-size: cover;
+            color: white; padding: 100px 20px; text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 92%, 0% 100%);
+        }
+
+        header h1 { margin: 0; font-size: 2.8rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+        header p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 15px auto; }
+
+        .container { max-width: 1100px; margin: auto; padding: 20px; }
+        .section-title { text-align: center; color: var(--dark-blue); font-size: 2rem; margin: 50px 0 30px; position: relative; }
+        .section-title::after { content: ''; display: block; width: 50px; height: 4px; background: var(--accent-teal); margin: 10px auto; border-radius: 2px; }
+
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 50px; }
+        .card { 
+            background: white; border-radius: 16px; padding: 40px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: 0.3s; 
+            border-top: 6px solid var(--primary-blue);
+        }
+        .card:hover { transform: translateY(-8px); }
+        .card.tpl { border-top-color: var(--accent-teal); }
+
+        .benefits-list { list-style: none; padding: 0; margin: 25px 0; }
+        .benefits-list li { padding: 10px 0; display: flex; align-items: center; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        .benefits-list li::before { content: "✓"; color: var(--whatsapp-green); font-weight: bold; margin-right: 12px; }
+
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .why-item { background: white; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #e1e8ed; }
+        .why-item h4 { margin: 10px 0; color: var(--primary-blue); }
+
+        .review-box { background: #fff; padding: 40px; border-radius: 16px; margin-top: 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .review-form input, .review-form textarea { 
+            width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;
+        }
+        .btn-post { background: var(--dark-blue); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
+        .review-display-item { background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid var(--primary-blue); }
+
+        .cta-box { 
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%); 
+            color: white; padding: 70px 20px; border-radius: 24px; text-align: center; margin-top: 60px;
+        }
+        
+        .btn-main-quote { 
+            display: inline-block; 
+            background-color: var(--whatsapp-green) !important; 
+            color: white !important; 
+            padding: 22px 60px; 
+            text-decoration: none !important; 
+            border-radius: 50px; 
+            font-weight: 800; 
+            font-size: 1.6rem; 
+            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
+            transition: 0.3s ease-in-out;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-main-quote:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        .whatsapp-float { 
+            position: fixed; width: 65px; height: 65px; bottom: 30px; right: 30px; 
+            background-color: var(--whatsapp-green); color: white; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); z-index: 1000; text-decoration: none; font-weight: bold;
+        }
+
+        footer { text-align: center; padding: 60px 20px; opacity: 0.6; font-size: 0.9rem; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8rem; }
+            .btn-main-quote { width: 85%; padding: 20px 5px; font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Car Care Insurance</h1>
+    <p>Premium Vehicle Coverage & 24/7 Priority WhatsApp Support in the UAE</p>
+</header>
+
+<div class="container">
+    
+    <h2 class="section-title">Insurance Plans</h2>
+    <div class="grid-cards">
+        <div class="card">
+            <h3>Full Comprehensive</h3>
+            <p>Complete high-end protection for your vehicle.</p>
+            <ul class="benefits-list">
+                <li>Accidental Damage Cover</li>
+                <li>Theft and Fire Protection</li>
+                <li>Vehicle Total Loss Coverage</li>
+                <li>Third-Party Liability Included</li>
+                <li>UAE & Oman Geographical Extension</li>
+                <li>Emergency Expenses Reimbursement</li>
+                <li>Fast Ambulance Services</li>
+            </ul>
+        </div>
+
+        <div class="card tpl">
+            <h3>Third-Party Insurance</h3>
+            <p>Essential coverage meeting all UAE legal standards.</p>
+            <ul class="benefits-list">
+                <li>Third-Party Liability</li>
+                <li>Third-Party Property Damage</li>
+                <li>Third-Party Bodily Injury Cover</li>
+                <li>Driver & Passengers Medical Expenses</li>
+            </ul>
+        </div>
+    </div>
+
+    <h2 class="section-title">Service Benefits</h2>
+    <div class="why-grid">
+        <div class="why-item"><h4>24/7 Availability</h4><p>Always here when you need us.</p></div>
+        <div class="why-item"><h4>Fast Service</h4><p>Quick quotes and issuance.</p></div>
+        <div class="why-item"><h4>100% Secure</h4><p>Verified and safe policies.</p></div>
+        <div class="why-item"><h4>Expert Support</h4><p>Handling all insurance types.</p></div>
+    </div>
+
+    <div class="review-box">
+        <h3>Client Reviews</h3>
+        <div class="review-form">
+            <input type="text" id="revName" placeholder="Your Name">
+            <textarea id="revText" rows="3" placeholder="Tell us about your experience..."></textarea>
+            <button class="btn-post" onclick="addReview()">Submit Review</button>
+        </div>
+        <div id="review-list"></div>
+    </div>
+
+    <div class="cta-box">
+        <h2>Ready for a Quote?</h2>
+        <p style="margin-bottom: 30px;">Click the green button below to start a WhatsApp chat instantly.</p>
+        <a href="https://wa.me/971547539533" 
+           class="btn-main-quote" 
+           target="_blank">
+            GET A QUOTE
+        </a>
+    </div>
+
+</div>
+
+<a href="https://wa.me/971547539533" 
+   class="whatsapp-float" 
+   target="_blank">
+   WA
+</a>
+
+<footer>
+    &copy; 2026 CAR CARE INSURANCE UAE. All Rights Reserved.
+</footer>
+
+<script>
+    function addReview() {
+        const name = document.getElementById('revName').value;
+        const text = document.getElementById('revText').value;
+        if(name && text) {
+            const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
+            reviews.unshift({name, text});
+            localStorage.setItem('cc_reviews', JSON.stringify(reviews));
+            showReviews();
+            document.getElementById('revName').value = '';
+            document.getElementById('revText').value = '';
+        }
+    }
+
+    function showReviews() {
+        const container = document.getElementById('review-list');
+        const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
+        if(reviews.length === 0) { container.innerHTML = "<p style='color:#999'>No reviews yet.</p>"; return; }
+        container.innerHTML = reviews.map(r => `
+            <div class="review-display-item">
+                <strong>${r.name}</strong>
+                <p>"${r.text}"</p>
+            </div>
+        `).join('');
+    }
+    window.onload = showReviews;
+</script>
+
+</body>
+</html>
