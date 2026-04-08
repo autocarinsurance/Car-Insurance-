@@ -172,17 +172,32 @@
 
 <footer>&copy; 2026 CAR CARE INSURANCE UAE. All Rights Reserved.</footer>
 
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
 <script>
+    // Firebase Configuration - Replace with your own keys from Firebase Console
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+        databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_ID.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     let currentPage = 1;
     let reviewsPerPage = 3;
     let isAdmin = false;
-
-    // The password "1508" is now hidden as an encoded string
     const _0xAdmin = "MTUwOA=="; 
 
     function enableAdmin() {
         let p = prompt("Enter Admin Password:");
-        // Checks if input matches the decoded secret
         if(btoa(p) === _0xAdmin) { 
             isAdmin = true; 
             alert("Admin Active! Delete buttons are now visible.");
@@ -197,59 +212,73 @@
         const name = document.getElementById('revName').value;
         const text = document.getElementById('revText').value;
         if(name && text) {
-            const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
-            reviews.unshift({id: Date.now(), name, text});
-            localStorage.setItem('cc_reviews', JSON.stringify(reviews));
-            currentPage = 1;
-            showReviews();
-            document.getElementById('revName').value = '';
-            document.getElementById('revText').value = '';
+            // Push to Firebase Realtime Database
+            const newReviewRef = db.ref('reviews').push();
+            newReviewRef.set({
+                id: Date.now(),
+                name: name,
+                text: text
+            }).then(() => {
+                document.getElementById('revName').value = '';
+                document.getElementById('revText').value = '';
+                currentPage = 1;
+                // showReviews is called automatically via .on('value')
+            });
         }
     }
 
-    function deleteReview(id) {
+    function deleteReview(firebaseId) {
         if(confirm("Permanently delete this review?")) {
-            let reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
-            reviews = reviews.filter(r => r.id !== id);
-            localStorage.setItem('cc_reviews', JSON.stringify(reviews));
-            showReviews();
+            db.ref('reviews/' + firebaseId).remove();
         }
     }
 
     function prevPage() { if(currentPage > 1) { currentPage--; showReviews(); } }
     function nextPage() { 
-        const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
-        if(currentPage < Math.ceil(reviews.length/reviewsPerPage)) { currentPage++; showReviews(); } 
+        db.ref('reviews').once('value', (snapshot) => {
+            const reviews = snapshot.val() ? Object.values(snapshot.val()) : [];
+            if(currentPage < Math.ceil(reviews.length/reviewsPerPage)) { currentPage++; showReviews(); } 
+        });
     }
 
     function showReviews() {
         const container = document.getElementById('review-list');
-        const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
         
-        if(reviews.length === 0) { 
-            container.innerHTML = "<p style='color:#999; padding:20px;'>No reviews yet.</p>"; 
-            document.getElementById('pagination-controls').style.display = 'none';
-            return; 
-        }
+        // Listen for real-time updates
+        db.ref('reviews').on('value', (snapshot) => {
+            const data = snapshot.val();
+            // Convert object to array and reverse for newest first
+            const reviewsArray = [];
+            for (let id in data) {
+                reviewsArray.push({ fbId: id, ...data[id] });
+            }
+            const reviews = reviewsArray.reverse();
+            
+            if(reviews.length === 0) { 
+                container.innerHTML = "<p style='color:#999; padding:20px;'>No reviews yet.</p>"; 
+                document.getElementById('pagination-controls').style.display = 'none';
+                return; 
+            }
 
-        document.getElementById('pagination-controls').style.display = 'flex';
-        let start = (currentPage - 1) * reviewsPerPage;
-        let pagedReviews = reviews.slice(start, start + reviewsPerPage);
+            document.getElementById('pagination-controls').style.display = 'flex';
+            let start = (currentPage - 1) * reviewsPerPage;
+            let pagedReviews = reviews.slice(start, start + reviewsPerPage);
 
-        container.innerHTML = pagedReviews.map(r => `
-            <div class="review-display-item">
-                <div>
-                    <strong>${r.name}</strong>
-                    <p style="margin:5px 0 0;">"${r.text}"</p>
+            container.innerHTML = pagedReviews.map(r => `
+                <div class="review-display-item">
+                    <div>
+                        <strong>${r.name}</strong>
+                        <p style="margin:5px 0 0;">"${r.text}"</p>
+                    </div>
+                    ${isAdmin ? `<button class="del-btn-admin" onclick="deleteReview('${r.fbId}')">Delete</button>` : ''}
                 </div>
-                ${isAdmin ? `<button class="del-btn-admin" onclick="deleteReview(${r.id})">Delete</button>` : ''}
-            </div>
-        `).join('');
+            `).join('');
 
-        const totalPages = Math.ceil(reviews.length/reviewsPerPage);
-        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
-        document.getElementById('prevBtn').disabled = (currentPage === 1);
-        document.getElementById('nextBtn').disabled = (currentPage === totalPages || totalPages === 0);
+            const totalPages = Math.ceil(reviews.length/reviewsPerPage);
+            document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (currentPage === totalPages || totalPages === 0);
+        });
     }
 
     window.onload = showReviews;
