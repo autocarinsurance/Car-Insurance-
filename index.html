@@ -52,12 +52,25 @@
         .why-item { background: white; padding: 30px; border-radius: 12px; text-align: center; border: 1px solid #e1e8ed; }
         .why-item h4 { margin: 10px 0; color: var(--primary-blue); }
 
-        .review-box { background: #fff; padding: 40px; border-radius: 16px; margin-top: 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .review-box { background: #fff; padding: 40px; border-radius: 16px; margin-top: 60px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); position: relative; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .review-form input, .review-form textarea { 
             width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; box-sizing: border-box;
         }
         .btn-post { background: var(--dark-blue); color: white; border: none; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-        .review-display-item { background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid var(--primary-blue); }
+        
+        .review-display-item { 
+            background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 20px; 
+            border-left: 4px solid var(--primary-blue);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .admin-login-btn { background: #eee; border: 1px solid #ccc; padding: 5px 15px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-weight: bold; color: #666; }
+        .del-btn-admin { background: #ff4757; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        .pagination-nav { margin-top: 25px; text-align: center; display: flex; justify-content: center; align-items: center; gap: 15px; }
+        .nav-btn { padding: 8px 15px; border: 1px solid #ccc; background: white; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .cta-box { 
             background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-blue) 100%); 
@@ -65,20 +78,11 @@
         }
         
         .btn-main-quote { 
-            display: inline-block; 
-            background-color: var(--whatsapp-green) !important; 
-            color: white !important; 
-            padding: 22px 60px; 
-            text-decoration: none !important; 
-            border-radius: 50px; 
-            font-weight: 800; 
-            font-size: 1.6rem; 
-            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
-            transition: 0.3s ease-in-out;
-            cursor: pointer;
-            border: none;
+            display: inline-block; background-color: var(--whatsapp-green) !important; color: white !important; 
+            padding: 22px 60px; text-decoration: none !important; border-radius: 50px; 
+            font-weight: 800; font-size: 1.6rem; box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
+            transition: 0.3s ease-in-out; cursor: pointer; border: none;
         }
-        .btn-main-quote:hover { transform: scale(1.05); filter: brightness(1.1); }
 
         .whatsapp-float { 
             position: fixed; width: 65px; height: 65px; bottom: 30px; right: 30px; 
@@ -88,11 +92,6 @@
         }
 
         footer { text-align: center; padding: 60px 20px; opacity: 0.6; font-size: 0.9rem; }
-
-        @media (max-width: 600px) {
-            header h1 { font-size: 1.8rem; }
-            .btn-main-quote { width: 85%; padding: 20px 5px; font-size: 1.3rem; }
-        }
     </style>
 </head>
 <body>
@@ -141,62 +140,118 @@
     </div>
 
     <div class="review-box">
-        <h3>Client Reviews</h3>
+        <div class="review-header">
+            <h3>Client Reviews</h3>
+            <button class="admin-login-btn" id="admBtn" onclick="enableAdmin()">Admin Login</button>
+        </div>
+        
         <div class="review-form">
             <input type="text" id="revName" placeholder="Your Name">
             <textarea id="revText" rows="3" placeholder="Tell us about your experience..."></textarea>
             <button class="btn-post" onclick="addReview()">Submit Review</button>
         </div>
+        
         <div id="review-list"></div>
+
+        <div class="pagination-nav" id="pagination-controls">
+            <button class="nav-btn" id="prevBtn" onclick="prevPage()">Previous</button>
+            <span id="pageInfo"></span>
+            <button class="nav-btn" id="nextBtn" onclick="nextPage()">Next</button>
+        </div>
     </div>
 
     <div class="cta-box">
         <h2>Ready for a Quote?</h2>
         <p style="margin-bottom: 30px;">Click the green button below to start a WhatsApp chat instantly.</p>
-        <a href="https://wa.me/971547539533" 
-           class="btn-main-quote" 
-           target="_blank">
-            GET A QUOTE
-        </a>
+        <a href="https://wa.me/971547539533" class="btn-main-quote" target="_blank">GET A QUOTE</a>
     </div>
 
 </div>
 
-<a href="https://wa.me/971547539533" 
-   class="whatsapp-float" 
-   target="_blank">
-   WA
-</a>
+<a href="https://wa.me/971547539533" class="whatsapp-float" target="_blank">WA</a>
 
-<footer>
-    &copy; 2026 CAR CARE INSURANCE UAE. All Rights Reserved.
-</footer>
+<footer>&copy; 2026 CAR CARE INSURANCE UAE. All Rights Reserved.</footer>
 
 <script>
+    let currentPage = 1;
+    let reviewsPerPage = 3;
+    let isAdmin = false;
+
+    // The password "1508" is now hidden as an encoded string
+    const _0xAdmin = "MTUwOA=="; 
+
+    function enableAdmin() {
+        let p = prompt("Enter Admin Password:");
+        // Checks if input matches the decoded secret
+        if(btoa(p) === _0xAdmin) { 
+            isAdmin = true; 
+            alert("Admin Active! Delete buttons are now visible.");
+            document.getElementById('admBtn').innerText = "Admin: ON";
+            showReviews(); 
+        } else {
+            alert("Incorrect password.");
+        }
+    }
+
     function addReview() {
         const name = document.getElementById('revName').value;
         const text = document.getElementById('revText').value;
         if(name && text) {
             const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
-            reviews.unshift({name, text});
+            reviews.unshift({id: Date.now(), name, text});
             localStorage.setItem('cc_reviews', JSON.stringify(reviews));
+            currentPage = 1;
             showReviews();
             document.getElementById('revName').value = '';
             document.getElementById('revText').value = '';
         }
     }
 
+    function deleteReview(id) {
+        if(confirm("Permanently delete this review?")) {
+            let reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
+            reviews = reviews.filter(r => r.id !== id);
+            localStorage.setItem('cc_reviews', JSON.stringify(reviews));
+            showReviews();
+        }
+    }
+
+    function prevPage() { if(currentPage > 1) { currentPage--; showReviews(); } }
+    function nextPage() { 
+        const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
+        if(currentPage < Math.ceil(reviews.length/reviewsPerPage)) { currentPage++; showReviews(); } 
+    }
+
     function showReviews() {
         const container = document.getElementById('review-list');
         const reviews = JSON.parse(localStorage.getItem('cc_reviews')) || [];
-        if(reviews.length === 0) { container.innerHTML = "<p style='color:#999'>No reviews yet.</p>"; return; }
-        container.innerHTML = reviews.map(r => `
+        
+        if(reviews.length === 0) { 
+            container.innerHTML = "<p style='color:#999; padding:20px;'>No reviews yet.</p>"; 
+            document.getElementById('pagination-controls').style.display = 'none';
+            return; 
+        }
+
+        document.getElementById('pagination-controls').style.display = 'flex';
+        let start = (currentPage - 1) * reviewsPerPage;
+        let pagedReviews = reviews.slice(start, start + reviewsPerPage);
+
+        container.innerHTML = pagedReviews.map(r => `
             <div class="review-display-item">
-                <strong>${r.name}</strong>
-                <p>"${r.text}"</p>
+                <div>
+                    <strong>${r.name}</strong>
+                    <p style="margin:5px 0 0;">"${r.text}"</p>
+                </div>
+                ${isAdmin ? `<button class="del-btn-admin" onclick="deleteReview(${r.id})">Delete</button>` : ''}
             </div>
         `).join('');
+
+        const totalPages = Math.ceil(reviews.length/reviewsPerPage);
+        document.getElementById('pageInfo').innerText = `Page ${currentPage} of ${totalPages}`;
+        document.getElementById('prevBtn').disabled = (currentPage === 1);
+        document.getElementById('nextBtn').disabled = (currentPage === totalPages || totalPages === 0);
     }
+
     window.onload = showReviews;
 </script>
 
